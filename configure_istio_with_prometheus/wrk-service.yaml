@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wrk-benchmark
+  namespace: istio-telemetry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wrk-benchmark
+  template:
+    metadata:
+      labels:
+        app: wrk-benchmark
+    spec:
+      containers:
+        - name: wrk
+          image: williamyeh/wrk
+          command: [ "/bin/sh", "-c", "sleep 3600" ]
+          # 'sleep 3600' ensures the container runs long enough for manual benchmarking
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wrk-benchmark-service
+  namespace: istio-telemetry
+spec:
+  selector:
+    app: wrk-benchmark
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+
